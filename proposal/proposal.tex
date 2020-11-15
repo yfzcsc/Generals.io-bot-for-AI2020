@@ -1,1 +1,77 @@
+%!TEX program = pdflatex
+\documentclass{elegantpaper}
 
+\usepackage{amsmath,amssymb}
+\usepackage{fullpage}
+\usepackage{setspace}
+\usepackage{verbatim}
+\usepackage{clrscode}
+\usepackage{float}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage{fullpage}
+\usepackage{setspace}
+\usepackage{mathrsfs}
+\usepackage{verbatim}
+\usepackage{mathpazo}
+\usepackage[noend]{algpseudocode}
+\usepackage{algorithmicx,algorithm}
+
+\title{AI Project Proposal: Generals.io}
+\author{Fangzhou Yuan, Xiaxi Ye}
+	
+\date{Last update: \today}
+
+\begin{document}
+
+\maketitle
+
+\section{Generals.io: the game}
+Generals.io is a game for two to eight players exhibited through a grid where players can expand their lands and battle against other enemies managed by other players.
+There are exactly four types of lands, namely \verb|normal lands|, \verb|millitary camps|, \verb|mountains| and \verb|generals| which are all explained as follows.
+\begin{itemize}[noitemsep]
+	\item \verb|normal lands|: there must be at least one soldier remained on the occupied normal lands. The number of soldiers increases by one every 25 turns.
+	\item \verb|millitary camps|: to occupy these lands, players must transfer as many soldiers as the number indicated on the land. The number of soldiers increases by one every 1 turn.
+	\item \verb|mountains|: all players have no access on these lands.
+	\item \verb|generals|: the number of soldiers increases by 1 every 1 turn.
+\end{itemize}
+\begin{figure}[H]
+	\center{\includegraphics[width=2.5cm]  {1.png}}
+	\caption{\label{1} }
+\end{figure}
+
+Each player is assigned with a color and owns a general initially which is what he or she tries to protect from others' attack. Also, lands which are each represented by a rectangle in the grid are painted by a certain color if they are  occupied by the corresponding player and grey otherwise. And the number labored on a rectangle implies the number of the soldiers placed on the corresponding land.
+The goal of the game is to expand lands by transferring soldiers so as to capture the other players's generals without being captured by others.
+
+In each turn, players can choose to move almost all or half of their soldiers from one rectangle which is occupied by themselves to another adjacent rectangle (i.e. rectangles having one common edge are regarded as adjacent rectangles.) or do not change anything. When two armies battle against, the player with larger number of soldiers at the designated land win. As a result, these two players all lose the same number of soldiers which is equal to the number of the loser's soldiers at this land. There is also an interesting setting which complicates the game: player can only get strict information about the lands that are surrounding the lands they own. And the game ends until there is only one player with its general not attacked by others, which ultimately determines the winner of the game.
+
+\section{Reasons for focusing on this problem}
+Looking back upon the history of Artificial Intelligence, ancient game domains such as chess and checkers have led to substantial developments in AI mainly because they all provide relatively clearly well-defined problems with measurable complexities compared with problems occuring in reality. Recently, machine learning has made massive great progress with artificial agents reaching remarkable performance in challenging domains like Go, Atari and Poker. However, there is still a gap between problems in games and reality. Hence, we need to research on problems that give us valuable inspirations to deal with problems in reality. Among such problems, general.io, a reduced version of Starcraft, is a good example which provides AI practitioners a simple testing environment. Intuitively, the game simulates a system in which muliple characters make their efforts to win through numerous turns in a long period of time without full knowledge. In particular, the game proposes the following topics.
+\begin{enumerate}[noitemsep]
+	\item Imperfect Information about environment
+	\item Multi-agent Reinforcement Learning
+	\item Suboptimal policies
+\end{enumerate}{}
+
+\section{Survey on previous work}
+Games have been studied a lot in recent years. Perfect-information games such as chess and Go have been mastered using general purpose reinforcement learning and planning algorithms. For multi-player imperfect-information games, Texas Hold'em\cite{Deepstack17} and
+Mahjong\cite{Suphx} are also studied. In \cite{Suphx}, they introduced some new techniques including global reward prediction, oracle guiding, and run-time policy adaptation. These algorithms have showed their strong power on these problems.
+Video games are more difficult and complex, because of the large number of possible states. To solve it, one important method is DQN, Deep Q-Learning, which has been used widely. A video game StarCraft II, which is similar to Generals.io, but much more complex, has been studied\cite{Deepmind19}. This paper introduced some methods, such as Actor-Critic, Policy Distillation and so on.
+
+\section{Ideas}
+First we try to use the techniques for previous video games such as StarCraft, Atari to build a bot. Then we try to use some new technique to improve the performance.
+
+The actions in Generals.io can be divided into two categories: micro actions and macro actions. Micro actions include producing the largest number of soldiers, building up an army to attack enemies. Macro actions include allocating the soldiers to attack or defense. Macro actions are more difficult and more important than micro actions. We try to use some technique to improve the performance on macro actions. We think that the technique in card game such as Mahjong, Texas hold'em can be also used in video games. For example, Monte-Carlo Tree Search algorithm has been used in build order\cite{El20}. Also, we think that we can use some deep learning technique, such as LSTM\cite{bili19}. Hierarchical Deep Reinforcement Learning can also be used in Generals.io\cite{Xu19}. The idea is to learn then combining multiple sub-policies, and each of these sub-polices is trained to counter a specific opponent.
+
+\begin{thebibliography}{99}
+ \bibitem{Deepstack17}Moravčík M, Schmid M, Burch N, et al. Deepstack: Expert-level artificial intelligence in heads-up no-limit poker[J]. Science, 2017, 356(6337): 508-513.
+\bibitem{Deepmind19}Vinyals, O., Babuschkin, I., Czarnecki, W.M. et al. Grandmaster level in StarCraft II using multi-agent reinforcement learning. Nature 575, 350–354 (2019).
+\bibitem{Suphx}Li J, Koyamada S, Ye Q, et al. Suphx: Mastering Mahjong with Deep Reinforcement Learning[J]. arXiv preprint arXiv:2003.13590, 2020.
+\bibitem{bili19}Xu S, Kuang H, Zhi Z, et al. Macro action selection with deep reinforcement learning in starcraft[C]//Proceedings of the AAAI Conference on Artificial Intelligence and Interactive Digital Entertainment. 2019, 15(1): 94-99.
+\bibitem{Xu19}H. Xu, K. Paster, Q. Chen, H. Tang, P. Abbeel, T. Darrell, and S. Levine,
+"Hierarchical deep reinforcement learning agent with counter self-play
+on competitive games," 2018
+\bibitem{El20}Elnabarawy I, Arroyo K, Wunsch II D C. StarCraft II Build Order Optimization using Deep Reinforcement Learning and Monte-Carlo Tree Search[J]. arXiv preprint arXiv:2006.10525, 2020.
+\end{thebibliography}
+
+\end{document}
