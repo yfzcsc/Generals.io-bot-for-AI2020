@@ -69,11 +69,19 @@ private:
 	void act(int id,pair<int,int> p){
 		int bg=p.first;
 		int ed=p.second;
-		int army=soldier[bg/W][bg%W]-1;
+		int armys=soldier[bg/W][bg%W]-1;
 		soldier[bg/W][bg%W]=1;
-		if(A[ed/W][ed%W]==id)soldier[ed/W][ed%W]+=army;
-		else if(soldier[ed/W][ed%W]<army)A[ed/W][ed%W]=id,soldier[ed/W][ed%W]=army-soldier[ed/W][ed%W];
-		else soldier[ed/W][ed%W]-=army;
+		if(A[ed/W][ed%W]==id)soldier[ed/W][ed%W]+=armys;
+		else if(soldier[ed/W][ed%W]<armys){
+			if(A[ed/W][ed%W]>=0)army[A[ed/W][ed%W]]-=soldier[ed/W][ed%W];
+			army[id]-=soldier[ed/W][ed%W];
+			A[ed/W][ed%W]=id;
+			soldier[ed/W][ed%W]=armys-soldier[ed/W][ed%W];
+		} else {
+			army[id]-=armys;
+			if(A[ed/W][ed%W]>=0)army[A[ed/W][ed%W]]-=armys;
+			soldier[ed/W][ed%W]-=armys;
+		}
 	}
 	void do_lost(int winner,int loser){
 		for(int i=0;i<W;++i)
@@ -81,6 +89,7 @@ private:
 				if(A[i][j]==loser)
 					A[i][j]=winner;
 		army[winner]+=army[loser];
+		army[loser]=0;
 	}
 	void doswitch(int player){
 		whosee=player;
@@ -97,6 +106,7 @@ public:
 		static int Q[N],ls[N],rest;
 		rest=n;
 		for(int i=0;i<n;++i)assert(tg[i]);
+		for(int i=0;i<n;++i)army[i]=1;
 		for(int turn=1;;turn++){
 			for(int i=0;i<n;++i)vis[i]=0;
 			for(int i=0;i<n;++i)if(!lost[i]){
@@ -108,7 +118,7 @@ public:
 				doswitch(-1);
 			} else vis[i]=true;
 			
-			for(int i=0;i<n;++i)if(!vis[i]){
+			/*for(int i=0;i<n;++i)if(!vis[i]){
 				int flg=0;
 				for(int j=0;j<n;++j)if(pos[i].second==pos[j].first&&!vis[j])
 					flg=1;
@@ -132,11 +142,11 @@ public:
 			for(int i=0;i<n;++i)if(!vis[i]&&soldier[pos[i].first/W][pos[i].first%W]>0){
 				A[pos[i].second/W][pos[i].second%W]=i;
 				soldier[pos[i].second/W][pos[i].second%W]=ls[i];
+			}*/
+			for(int i=0;i<n;++i)if(!vis[i]){
+				if(check_move(i,pos[i].first,pos[i].second))
+					act(i,pos[i]);
 			}
-		//	for(int i=0;i<n;++i)if(!vis[i]){
-		//		if(check_move(i,pos[i].first,pos[i].second))
-		//			act(i,pos[i]);
-		//	}
 			// lose
 			for(int i=0;i<n;++i)if(!lost[i])
 				if(A[generals[i]/W][generals[i]%W]!=i){
@@ -147,6 +157,7 @@ public:
 			if(rest==1){
 				printf("Game end at turn:%d\n",turn);
 				print_mp();
+				break;
 				for(int i=0;i<n;++i)if(!lost[i])
 					return i;
 			}
@@ -162,7 +173,13 @@ public:
 						if(A[i][j]>=0&&iscamp[i][j])soldier[i][j]++,army[A[i][j]]++;
 				for(int i=0;i<n;++i)soldier[generals[i]/W][generals[i]%W]++,army[i]++;
 			}
+			
+		
 		}
+		int x[10]={0};
+		for(int i=0;i<W;++i)for(int j=0;j<H;++j)
+			if(A[i][j]>=0)x[A[i][j]]+=soldier[i][j];
+		for(int i=0;i<n;++i)printf("[General %d's army: %d,%d]\n",i,army[i],x[i]);
 	}
 	void generalinit(){
 		for(int i=0;i<W;++i)
@@ -222,7 +239,7 @@ public:
 };
 pair<int,int> rndbot(int myindex,Game& g){
 	int W=g.getW(),H=g.getH();	
-	static int x=134985,y=29,z=0;
+/*	static int x=134985,y=29,z=0;
 	x=1ll*x*y%19260817;
 	int x0=1ll*x*x%19260817;
 	
@@ -231,7 +248,7 @@ pair<int,int> rndbot(int myindex,Game& g){
 	else if(x%8<=6)z=x0%100-10;
 	else z=x0%100+10;
 //	printf("[%d,%d,%d]\n",myindex,x0%100,z);
-	return make_pair(x0%100,z);
+	return make_pair(x0%100,z);*/
 	while(1){
 		int pos=rand()%(W*H),row=pos/W,col=pos%W;
 		if(g.getmp(row,col)==myindex){
